@@ -1,0 +1,5 @@
+There is a lot of noise in the data, so I will use a smoothing technique to remove it.
+I will try to generate synthetic data to test the model.
+I will use a combination of techniques to evaluate the model.
+I will use a combination of techniques to visualize the data.
+I will use a combination of techniques to compare the models.
