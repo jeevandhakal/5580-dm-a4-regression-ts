@@ -1,0 +1,1 @@
+{"LinearRegression": {}, "HoltWinters": {}, "ARIMA": {"d": 0, "p": 0, "q": 3}, "SVR": {"SVR_C": 0.6839107352478422, "svr_kernel": "rbf"}, "RegressionTree": {"dt_depth": 11}, "XGBoost": {}, "LightGBM": {}, "NN_1_Layer": {"u0_NN_1_Layer": 251}, "NN_3_Layer": {"u0_NN_3_Layer": 117, "u1_NN_3_Layer": 173, "u2_NN_3_Layer": 247}}
