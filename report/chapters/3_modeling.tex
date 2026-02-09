@@ -15,14 +15,24 @@ The optimization process focused on the following key parameters:
     \item \textbf{Neural Networks:} For both the 1-Layer and 3-Layer architectures, we optimized the number of units per layer between 32 and 256, ensuring the network had sufficient capacity to map intra-day demand patterns without over-parameterization.
 \end{itemize}
 
-\subsection{Tuning Stability and Best Trial}
-As documented in our \texttt{optuna\_trials\_final.csv}, the study successfully converged on parameters that reduced MAPE significantly from the initial baseline levels. For the final experimental results, each model was retrained using the specific parameters from its respective "Best Trial" to ensure a fair comparison. 
+\subsection{Tuning Stability and Convergence}
 
-The \textbf{ARIMA(0,0,3)} and \textbf{NN (3-Layer with [117, 173, 247] units)} emerged as high-performing configurations from the parameter search, which were then validated on the unseen test set in the following chapter.
+\begin{wrapfigure}{r}{0.55\textwidth}
+    \centering
+    \includegraphics[width=1.0\linewidth]{figures/tuning_results_2.png}
+    \caption{Optuna objective expansion showing the convergence toward minimal MAPE across 100 trials.}
+    \label{fig:optuna_convergence}
+\end{wrapfigure}
+
+As documented in our \texttt{optuna\_trials\_final.csv}, the study successfully converged on parameters that reduced MAPE significantly from the initial baseline levels. The optimization was conducted over \textbf{100 trials}, where the TPE sampler initially explored the broad hyperparameter space before exploiting the most promising regions. 
+
+In the early trials (1--20), we observed significant variance in the objective value as the algorithm mapped the landscape. Between trials 25 and 70, the "Objective Expansion" narrowed considerably, indicating that the Bayesian surrogate model had correctly identified the performance plateaus for the tree-based and neural network architectures. By the final 20 trials, the search was largely fine-tuning the best models, resulting in the highly stable configuration seen in \autoref{fig:optuna_convergence}.
+
+The \textbf{ARIMA(0,0,3)} and \textbf{NN (3-Layer with [117, 173, 247] units)} emerged as high-performing configurations from this iterative refinement, which were then promoted to final test-set validation.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\linewidth]{figures/tuning_results_2.png}
-    \caption{Optuna objective expansion showing the convergence toward minimal MAPE across 100 trials.}
-    \label{fig:optuna_convergence}
+    \includegraphics[width=0.85\linewidth]{figures/optimization_history.png}
+    \caption{Optimization history visualization showing the objective value of each trial over the course of the 100-trial study.}
+    \label{fig:optuna_history_flow}
 \end{figure}
