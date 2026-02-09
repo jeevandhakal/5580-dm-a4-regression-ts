@@ -1,0 +1,51 @@
+\section[Appendix]{Appendix}
+\label{sec:app}
+
+\subsection{GitHub Repository}
+The complete source code, datasets, and Optuna study logs are available at: \\
+\url{https://github.com/jeevandhakal/5580-dm-a4-regression-ts}
+
+\subsection{Supplementary Visualizations}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/target_time_series.png}
+    \caption{Historical electricity consumption time series showing the full range of the dataset.}
+    \label{fig:target_ts}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/ts_decomposition.png}
+    \caption{Time-series decomposition (Additive) into Trend, Seasonal, and Residual components.}
+    \label{fig:ts_decomp}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/acf_pacf.png}
+    \caption{Autocorrelation (ACF) and Partial Autocorrelation (PACF) plots used for ARIMA order estimation.}
+    \label{fig:acf_pacf}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/correlation_heatmap.png}
+    \caption{Correlation heatmap between hour lags, cyclical features, and target consumption.}
+    \label{fig:correlation_heatmap}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/liear_regression_prediction_first_200_test.png}
+    \caption{Comparison of True vs. Predicted consumption values for the first 200 test samples (Linear Regression baseline).}
+    \label{fig:lr_prediction}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/tuning_results_1.png}
+    \caption{Optuna slice plot highlighting the sensitivity of MAPE to various hyperparameter values.}
+    \label{fig:optuna_slice}
+\end{figure}
+

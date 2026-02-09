@@ -1,0 +1,38 @@
+\section{Hyperparameter Tuning and Optimization}
+\label{sec:modeling}
+
+\subsection{Optuna-Based Bayesian Search}
+To move beyond manual heuristic selection, we employed \textbf{Optuna} \cite{optuna2024}, an automated hyperparameter optimization framework. We executed a study consisting of \textbf{100 trials}, utilizing a Tree-structured Parzen Estimator (TPE) to minimize the Mean Absolute Percentage Error (MAPE). 
+
+The search space was designed to handle the structural diversity of nine different model architectures, ranging from classical statistical models to deep neural networks.
+
+\subsection{Model-Specific Search Spaces}
+The optimization process focused on the following key parameters:
+\begin{itemize}
+    \item \textbf{Statistical Models (ARIMA):} We explored the $(p, d, q)$ order space in the range $[0, 3]$ for $p, q$ and $[0, 1]$ for $d$, allowing the model to adapt to various degrees of trend and autocorrelation.
+    \item \textbf{Kernel Methods (SVR):} We tuned the regularization parameter $C \in [0.1, 10.0]$ across both \textit{linear} and \textit{RBF} kernels to balance margin violations with boundary smoothness.
+    \item \textbf{Tree-Based (XGBoost/LightGBM):} While using 500 estimators as a constant, we leveraged GPU-accelerated histogram methods (\texttt{tree\_method='hist'}) to handle the large feature space efficiently.
+    \item \textbf{Neural Networks:} For both the 1-Layer and 3-Layer architectures, we optimized the number of units per layer between 32 and 256, ensuring the network had sufficient capacity to map intra-day demand patterns without over-parameterization.
+\end{itemize}
+
+\subsection{Tuning Stability and Convergence}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{figures/tuning_results_2.png}
+    \caption{Optuna objective expansion showing the convergence toward minimal MAPE across 100 trials.}
+    \label{fig:optuna_convergence}
+\end{figure}
+
+As documented in our \texttt{optuna\_trials\_final.csv}, the study successfully converged on parameters that reduced MAPE significantly from the initial baseline levels. The optimization was conducted over \textbf{100 trials}, where the TPE sampler initially explored the broad hyperparameter space before exploiting the most promising regions. 
+
+In the early trials (1--20), we observed significant variance in the objective value as the algorithm mapped the landscape. Between trials 25 and 70, the "Objective Expansion" narrowed considerably, indicating that the Bayesian surrogate model had correctly identified the performance plateaus for the tree-based and neural network architectures. By the final 20 trials, the search was largely fine-tuning the best models, resulting in the highly stable configuration seen in \autoref{fig:optuna_convergence}.
+
+The \textbf{ARIMA(0,0,3)} and \textbf{NN (3-Layer with [117, 173, 247] units)} emerged as high-performing configurations from this iterative refinement, which were then promoted to final test-set validation.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{figures/optimization_history.png}
+    \caption{Optimization history visualization showing the objective value of each trial over the course of the 100-trial study.}
+    \label{fig:optuna_history_flow}
+\end{figure}

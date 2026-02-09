@@ -1,0 +1,39 @@
+\section{Experimental Methodology}
+\label{sec:methodology}
+
+\subsection{Feature Engineering: Cyclical Encoding and Lags}
+To capture the complex periodicities of electricity consumption, we implemented two primary feature engineering strategies:
+\begin{itemize}
+    \item \textbf{Cyclical Encoding:} Using $\sin(Hour)$ and $\cos(Hour)$ to represent the 24-hour daily cycle. This ensures that the continuity between 23:00 and 00:00 is preserved.
+    \item \textbf{Temporal Lags:} We introduced \texttt{lag\_24} (identical hour yesterday) and \texttt{lag\_168} (identical hour last week) to provide seasonal context.
+\end{itemize}
+
+The implementation details of this feature engineering pipeline are documented in \autoref{sec:app_a} in the Appendix.
+
+\subsection{Preprocessing: The Case for StandardScaler}
+We utilized \textbf{StandardScaler} for all numeric inputs. 
+
+As seen in the distribution analysis below, our target variable exhibits varying scales and some outliers, but generally follows a recognizable structure that benefits from centering. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{figures/consumption_violinplot.png}
+    \caption{Violin plot showing consumption distribution across hour lags, justifying the use of standardized scaling.}
+    \label{fig:consumption_violin}
+\end{figure}
+
+StandardScaler centers data at a mean of 0 with a unit standard deviation. This is preferred for gradient stability in Neural Networks and outlier resilience across distance-based methods like SVR.
+
+\subsection{Chronological Data Partitioning}
+To evaluate the predictive power of our models accurately, we partitioned the dataset using a \textbf{70/15/15} ratio. 
+
+
+This resulted in a Training set (70\%), a Validation set (15\%) for tuning, and a Hold-out Test set (15\%) to report definitive performance.
+
+\textbf{Rationale for Avoiding K-Fold Validation:}\\
+We explicitly avoided standard \textit{Randomized K-Fold} or \textit{Stratified K-Fold} validation for the following reasons:
+\begin{enumerate}
+	\item \textbf{Temporal Dependency:} In time-series data, each observation is statistically dependent on its predecessors. Shuffling data into random folds breaks these chronological chains, which are essential for models like ARIMA and Lag-based regressors to function correctly.
+	\item \textbf{Look-Ahead Bias (Data Leakage):} Standard K-Fold allows "future" data to appear in the training set while "past" data is in the test set. This creates a leakage of information where the model implicitly learns trends from the future to predict the past, leading to artificially inflated accuracy that would not hold in a real-world deployment.
+	\item \textbf{Integrity of Autocorrelation:} By maintaining a rigid chronological split, we ensure that the model is always tested on a continuous block of unseen future time-steps, providing a realistic assessment of its forecasting stability.
+\end{enumerate}

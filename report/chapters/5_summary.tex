@@ -1,0 +1,20 @@
+\section{Business Value and Conclusion}
+\label{sec:summary}
+
+The transition from classical statistical models to high-performance gradient boosting delivers tangible strategic advantages for energy grid management. Our findings transform raw high-frequency data into actionable business intelligence.
+
+\subsection{Operational Planning and Load Balancing}
+Achieving a sub-10\% MAPE with \textbf{LightGBM} (\textbf{9.88\%}) allows utility providers to schedule generation and maintenance with high confidence. By accurately predicting intra-day peaks, operators can prevent over-generation (reducing waste) and mitigate the risk of blackouts during unpredicted surges. This level of precision is a definitive upgrade over classical ARIMA methods, which failed to capture the dataset's inherent volatility.
+
+\subsection{Cost Optimization and Arbitrage}
+The predictive power demonstrated by our models facilitates more aggressive participation in energy markets. Companies can leverage these forecasts to:
+\begin{itemize}
+    \item \textbf{Reduce Peak Surcharges:} Predict periods of high demand to trigger demand-response protocols.
+    \item \textbf{Optimize Storage:} Strategically charge industrial-scale batteries during low-load periods for discharge during predicted high-cost peaks.
+\end{itemize}
+
+\subsection{Real-time Agility with XGBoost}
+While LightGBM provides the absolute floor for error, our analysis identified \textbf{XGBoost} as the "Real-Time Leader" due to its 1.18s training latency. For businesses requiring rapid edge-recomputing or near-instant response to fluctuating sensor data, XGBoost offers the ideal balance of high accuracy (10.39\% MAPE) and low computational overhead.
+
+\subsection{Final Summary}
+Ultimately, this work proves that for high-resolution numeric datasets, the investment in modern ensemble architectures and rigorous feature engineering yields significant dividends. We recommend a hybrid deployment: using LightGBM for long-term strategic grid planning and XGBoost for localized, real-time demand-response systems.

@@ -1,0 +1,152 @@
+% ==== Appendix A ==== %
+\section[Appendix]{Appendix}
+\label{sec:app_a}
+
+\subsection{Source Code and Reproducibility}
+\textbf{GitHub Repository:} \href{https://github.com/jeevandhakal/5580-dm-a4-regression-ts}{Electricity Demand Regression Repository}
+
+\subsection{Video}
+\textbf{Youtube Link:}
+\href{https://youtu.be/L-faOnwFw5c}{Youtube}
+
+
+\subsection{AI Sessions}
+\href{https://gemini.google.com/share/d0dd8aa9887a}{Gemini}
+	
+\subsection{Experimental Hardware Configuration}
+\begin{table}[H]
+	\centering
+	\caption{Experimental Hardware Configuration}
+	\label{tab:experimental_setup}
+	\begin{tabular}{lp{0.7\textwidth}}
+		\toprule
+		\textbf{Category} & \textbf{Configuration} \\
+		\midrule
+		CPU & Intel Core i9-13900K processor with 24 cores (8P+16E), boost frequency up to 5.8 GHz. \\
+		RAM & 32 GB DDR5 memory operating at 4800 MT/s. \\
+		GPU & NVIDIA GeForce RTX 4070 with 8 GB GDDR6X VRAM, 5888 CUDA cores. \\
+		OS & Zorin OS Linux distribution (Kernel 6.x) with CUDA 12.5.1 and cuDNN 9 support. \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+\subsection{Exploratory Data Analysis (EDA)}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/target_time_series.png}
+    \caption{Full historical electricity consumption time series utilized in this study.}
+    \label{fig:app_target_ts}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/target_distribution.png}
+    \caption{Probability density function of the target variable (Consumption), showing a slight right-skew.}
+    \label{fig:app_target_dist}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/correlation_heatmap.png}
+    \caption{Correlation matrix of lags and cyclical features against the target variable.}
+    \label{fig:app_corr_heatmap}
+\end{figure}
+
+\subsection{Time Series Decomposition}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/ts_decomposition.png}
+    \caption{Seasonal decomposition of the dataset into Trend, Seasonal (Daily), and Random Noise.}
+    \label{fig:app_ts_decomp_full}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/acf_pacf.png}
+    \caption{Autocorrelation (ACF) and Partial Autocorrelation (PACF) plots used for feature lag selection.}
+    \label{fig:app_acf_pacf}
+\end{figure}
+
+\subsection{Optuna Hyperparameter Optimization Logs}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/tuning_results_2.png}
+    \caption{Optuna objective expansion showing the convergence toward minimal MAPE across 100 trials.}
+    \label{fig:app_optuna_convergence}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/optimization_history.png}
+    \caption{Progress of the Optuna study across 100 trials, minimizing the MAPE objective.}
+    \label{fig:optuna_history}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/slice_plot.png}
+    \caption{Parameter slice plot showing the impact of specific hyperparameter ranges on the objective value.}
+    \label{fig:optuna_slice_full}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/param_importance.png}
+    \caption{Hyperparameter importance plot identifying the most influential parameters for model precision.}
+    \label{fig:app_param_importance}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/tuning_results_1.png}
+    \caption{Intermediate optimization results showing early exploration of the hyperparameter search space.}
+    \label{fig:app_tuning_1}
+\end{figure}
+
+\subsection{Detailed Model Performance Benchmarks}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\linewidth]{figures/advanced_model_comparison.png}
+    \caption{Consolidated overview of model performance across key metrics (RMSE, MAPE, MAE, and Latency).}
+    \label{fig:app_full_comparison_redux}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\linewidth]{figures/model_mape_rmse.png}
+    \caption{Detailed view of RMSE and MAPE metrics, highlighting the trade-off between absolute and percentage errors.}
+    \label{fig:app_mape_rmse_detail}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{figures/model_mae.png}
+    \caption{Detailed view of Mean Absolute Error (MAE) performance.}
+    \label{fig:app_mae_detail}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{figures/model_time.png}
+    \caption{Detailed training latency comparison highlighting computational costs.}
+    \label{fig:app_time_detail}
+\end{figure}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/liear_regression_prediction_first_200_test.png}
+    \caption{Visual calibration showing True vs. Predicted values for the Linear Regression baseline on the test set.}
+    \label{fig:app_lr_pred}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\linewidth]{figures/feature_engineering_code.png}
+	\caption{Python implementation of the feature engineering pipeline.}
+	\label{fig:feature_engineering_code}
+\end{figure}

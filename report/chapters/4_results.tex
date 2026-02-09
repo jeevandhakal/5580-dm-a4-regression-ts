@@ -1,0 +1,54 @@
+\section{Results and Custom Analysis}
+\label{sec:results}
+
+\subsection{Performance Leaderboard}
+The following table summarizes the performance on the 15\% unseen test set after retraining each model on the combined Train+Val set (85\% of the total data).
+
+\begin{table}[H]
+    \centering
+    \caption{Final Model Test Performance on Electricity Consumption Data}
+    \label{tab:final_results}
+    \begin{tabular}{lcccr}
+        \toprule
+        \textbf{Model} & \textbf{MAPE (\%)} & \textbf{RMSE} & \textbf{MAE} & \textbf{Time (s)} \\
+        \midrule
+        \textbf{LightGBM} & \textbf{9.88} & 36.03 & 26.57 & 10.51 \\
+        XGBoost & 10.39 & 38.07 & 28.05 & 1.18 \\
+        SVR & 10.59 & 38.28 & 27.86 & 7.89 \\
+        NN (1-Layer) & 10.67 & 37.80 & 27.87 & 29.79 \\
+        NN (3-Layer) & 10.76 & 36.85 & 27.47 & 39.89 \\
+        Regression Tree & 10.71 & 40.46 & 28.98 & 0.54 \\
+        Linear Regression & 11.49 & 40.22 & 28.94 & 0.02 \\
+        Holt-Winters & 54.88 & 208.09 & 175.36 & 45.09 \\
+        ARIMA & 63.36 & 138.86 & 119.59 & 20.78 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Analysis of Accuracy and Efficiency}
+The results demonstrate a clear hierarchy in predictive stability, as visualized in \autoref{fig:mape_rmse_dist}. \textbf{LightGBM} achieved the lowest error (9.88\% MAPE), benefiting from its histogram-based gradient boosting which effectively handles high-frequency temporal spikes.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\linewidth]{figures/model_mape_rmse.png}
+    \caption{Model Performance: Mean Absolute Percentage Error (MAPE) and Root Mean Squared Error (RMSE) comparison across all candidates.}
+    \label{fig:mape_rmse_dist}
+\end{figure}
+
+\textbf{Efficiency Analysis:}\\
+While LightGBM is the leader in accuracy, \textbf{XGBoost} represents the optimal balance for real-time applications, completing its training phase nearly 9x faster while maintaining a MAPE of 10.39\%. Linear Regression remains the theoretical floor for latency (0.02s), yet its high error rate (11.49\%) confirms that the relationship between time-steps is heavily non-linear.
+
+\subsection{Quadrant Analysis}
+We mapped the computational cost against predictive error using a \textbf{Log-Log Quadrant Map} (\autoref{fig:quadrant}). 
+\begin{itemize}
+    \item \textbf{Elite Quadrant:} LightGBM and XGBoost resides here, offering both high accuracy and manageable runtime.
+    \item \textbf{Heavyweight Zone:} The Deep Neural Networks (3-Layer) show high precision but occupy the highest training latency.
+    \item \textbf{Ineffective Zone:} Classical ARIMA and Holt-Winters models, which struggled to converge on the high-resolution variance of this specific electricity dataset.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/quadrant_log_log.png}
+    \caption{Quadrant Analysis: Mapping Training Latency (s) vs. MAPE (\%). The bottom-left identifies models suitable for production deployment.}
+    \label{fig:quadrant}
+\end{figure}
