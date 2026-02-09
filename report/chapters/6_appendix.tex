@@ -1,63 +1,51 @@
-% ==== Appendix A Tables ==== %
-% LaTeX will automatically label this as "Appendix A."
 \section[Appendix]{Appendix}
 \label{sec:app}
 
-\subsection{Github}
-\href{https://github.com/jeevandhakal/clusturing_group_4}{GitHub repository}
+\subsection{GitHub Repository}
+The complete source code, datasets, and Optuna study logs are available at: \\
+\url{https://github.com/jeevandhakal/5580-dm-a4-regression-ts}
 
-\subsection{YouTube Video}
-See the \href{}{YouTube Video}.
-
-\subsection{Chat Session Links}
-\href{https://notebooklm.google.com/notebook/d60960bd-4ada-4bbe-b8cf-2f64da0a0d99?authuser=1}{Notebook LM}
-
-\href{https://chat.deepseek.com/a/chat/s/6e1b2b7c-6afb-4fd1-9d7d-a9f8f569cb7d}{DeepSeek 1}
-
-\href{https://chat.deepseek.com/a/chat/s/c3b5cd3c-7d4b-473d-b1ab-1353823a14d1}{DeepSeek 2}
+\subsection{Supplementary Visualizations}
 
 \begin{figure}[H]
-	\centering
-	\includegraphics[width=0.9\textwidth]{figures/p_clusters_scatter_plot.png}
-	\caption{Dual-metric analysis comparing the elbow method and silhouette score \cite{102}}
-	\label{fig:product_clusters}
-\end{figure}
-
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.9\textwidth]{figures/p_elbow.png}
-	\caption{Product Clusters Analysis}
-	\label{fig:product_elbow}
-\end{figure}
-
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.9\textwidth]{figures/k_3_1.png}
-	\caption{Various plots for features for 3 clusters}
-	\label{fig:product_elbow}
-\end{figure}
-
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.9\textwidth]{figures/k_3_2.png}
-	\caption{Various plots for features for 3 clusters}
-	\label{fig:product_elbow}
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/target_time_series.png}
+    \caption{Historical electricity consumption time series showing the full range of the dataset.}
+    \label{fig:target_ts}
 \end{figure}
 
 \begin{figure}[H]
-	\centering
-	\includegraphics[width=0.9\textwidth]{figures/k_4_1.png}
-	\caption{Various plots for features for 4 clusters}
-	\label{fig:product_elbow}
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/ts_decomposition.png}
+    \caption{Time-series decomposition (Additive) into Trend, Seasonal, and Residual components.}
+    \label{fig:ts_decomp}
 \end{figure}
 
 \begin{figure}[H]
-	\centering
-	\includegraphics[width=0.9\textwidth]{figures/k_3_4.png}
-	\caption{Comparison between 3 and 4 clusters}
-	\label{fig:product_elbow}
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/acf_pacf.png}
+    \caption{Autocorrelation (ACF) and Partial Autocorrelation (PACF) plots used for ARIMA order estimation.}
+    \label{fig:acf_pacf}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/correlation_heatmap.png}
+    \caption{Correlation heatmap between hour lags, cyclical features, and target consumption.}
+    \label{fig:correlation_heatmap}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/liear_regression_prediction_first_200_test.png}
+    \caption{Comparison of True vs. Predicted consumption values for the first 200 test samples (Linear Regression baseline).}
+    \label{fig:lr_prediction}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/tuning_results_1.png}
+    \caption{Optuna slice plot highlighting the sensitivity of MAPE to various hyperparameter values.}
+    \label{fig:optuna_slice}
 \end{figure}
 

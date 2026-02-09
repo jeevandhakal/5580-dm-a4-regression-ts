@@ -1,26 +1,28 @@
-\section{Methodology and System Architecture}
-\label{sec:3_method}
-This study transitioned from static heuristic models to an automated, high-performance classification framework designed for end-to-end reproducibility.
+\section{Hyperparameter Tuning and Optimization}
+\label{sec:modeling}
 
-\subsection{Computational Environment}
-Experiments were executed on a high-end workstation optimized for data-intensive tasks (see \autoref{tab:experimental_setup} in \autoref{sec:app_a}). To ensure environment stability and dependency integrity, a Python 3.10 virtual environment was utilized. This configuration facilitated exhaustive cross-validation and a large-scale stress test on \textbf{100,000 synthetic records}—generated to simulate high-volume real-world data—with minimal latency.
+\subsection{Optuna-Based Bayesian Search}
+To move beyond manual heuristic selection, we employed \textbf{Optuna}, an automated hyperparameter optimization framework. We executed a study consisting of \textbf{100 trials}, utilizing a Tree-structured Parzen Estimator (TPE) to minimize the Mean Absolute Percentage Error (MAPE). 
 
-\subsection{Modular Pipeline Design}
-A key contribution is the development of a modular Scikit-Learn pipeline that automates the transformation of categorical strings into machine-readable tensors.
+The search space was designed to handle the structural diversity of nine different model architectures, ranging from classical statistical models to deep neural networks.
 
+\subsection{Model-Specific Search Spaces}
+The optimization process focused on the following key parameters:
+\begin{itemize}
+    \item \textbf{Statistical Models (ARIMA):} We explored the $(p, d, q)$ order space in the range $[0, 3]$ for $p, q$ and $[0, 1]$ for $d$, allowing the model to adapt to various degrees of trend and autocorrelation.
+    \item \textbf{Kernel Methods (SVR):} We tuned the regularization parameter $C \in [0.1, 10.0]$ across both \textit{linear} and \textit{RBF} kernels to balance margin violations with boundary smoothness.
+    \item \textbf{Tree-Based (XGBoost/LightGBM):} While using 500 estimators as a constant, we leveraged GPU-accelerated histogram methods (\texttt{tree\_method='hist'}) to handle the large feature space efficiently.
+    \item \textbf{Neural Networks:} For both the 1-Layer and 3-Layer architectures, we optimized the number of units per layer between 32 and 256, ensuring the network had sufficient capacity to map intra-day demand patterns without over-parameterization.
+\end{itemize}
 
+\subsection{Tuning Stability and Best Trial}
+As documented in our \texttt{optuna\_trials\_final.csv}, the study successfully converged on parameters that reduced MAPE significantly from the initial baseline levels. For the final experimental results, each model was retrained using the specific parameters from its respective "Best Trial" to ensure a fair comparison. 
 
-The preprocessing architecture consists of three specialized stages:
-\begin{enumerate}
-	\item \textbf{CarDataCleaner:} Ensures feature consistency and string standardization.
-	\item \textbf{CarDataImputer:} Implements a "most\_frequent" strategy to handle data gaps, a critical component for the stress test containing 5,000 missing values per feature.
-	\item \textbf{CarDataEncoder:} Employs a hybrid strategy using Ordinal Mapping for hierarchical features (e.g., Price, Maintenance) and One-Hot Encoding for nominal attributes.
-\end{enumerate}
+The \textbf{ARIMA(0,0,3)} and \textbf{NN (3-Layer with [117, 173, 247] units)} emerged as high-performing configurations from the parameter search, which were then validated on the unseen test set in the following chapter.
 
-\subsection{Validation Strategy and Experimental Design}
-To achieve high statistical significance, a \textbf{Repeated Stratified K-Fold} validation strategy was employed with 10 repeats and 9 splits, totaling \textbf{90 folds}. This method mitigates "sampling luck" inherent in standard 80/20 splits, providing a robust distribution of F1-Macro and Accuracy metrics to assess algorithmic stability across varying data conditions.
-
-
-
-\subsection{Data Isolation (Vault Set)}
-A 10\% "Vault" set (173 records) was fully sequestered from the training and validation phases. This holdout set provides an unbiased final generalization benchmark before the models are subjected to the production-scale 100,000-record simulation. (Detailed results are provided in \autoref{sec:app_a}).
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/tuning_results_2.png}
+    \caption{Optuna objective expansion showing the convergence toward minimal MAPE across 100 trials.}
+    \label{fig:optuna_convergence}
+\end{figure}

@@ -1,65 +1,47 @@
-\section[Results]{Results and Comparative Analysis}
-This chapter evaluates the predictive performance and stability of the selected algorithms. By categorizing models into algorithmic families, we can analyze how different mathematical assumptions interact with the conditional logic of the car evaluation dataset.
+\section{Results and Custom Analysis}
+\label{sec:results}
 
-\subsection[Performance Learderboard]{Comparative Performance Leaderboard}
-Models were ranked by their \textbf{F1-Macro} score to ensure balanced evaluation across all four acceptability tiers, particularly given that "unacc" represents 70\% of the data. The results below reflect performance on the 10\% Vault set (173 records).
+\subsection{Performance Leaderboard}
+The following table summarizes the performance on the 15\% unseen test set after retraining each model on the combined Train+Val set (85\% of the total data).
 
-\begin{table}[h]
-	\centering
-	\caption{Comprehensive Performance and Efficiency Leaderboard (10\% Vault Set)}
-	\label{tab:master_leaderboard}
-	\begin{tabular}{llcccr}
-		\toprule
-		\textbf{Category} & \textbf{Algorithm} & \textbf{F1-Macro} & \textbf{Accuracy} & \textbf{Outcome} & \textbf{Time (ms)} \\
-		\midrule
-		\textbf{Boosting} & XGBoost & \textbf{0.98XX} & \textbf{0.98XX} & \textit{Champion} & 12.45 \\
-		\textbf{Neural} & ANN (MLP) & 0.97XX & 0.97XX & \textit{Elite} & 45.12 \\
-		\textbf{Bagging} & Random Forest & 0.96XX & 0.96XX & \textit{Strong} & 28.30 \\
-		\textbf{Kernel} & SVM (RBF) & 0.94XX & 0.94XX & \textit{Moderate} & 8.20 \\
-		\textbf{Distance} & KNN (K=3) & 0.91XX & 0.91XX & \textit{Baseline} & 15.60 \\
-		\textbf{Probabilistic} & Naive Bayes & 0.72XX & 0.75XX & \textit{Weak} & \textbf{2.10} \\
-		\textbf{Linear} & SVM (Linear) & 0.6XXX & 0.6XXX & \textit{Weak} & 5.40 \\
-		\bottomrule
-	\end{tabular}
+\begin{table}[H]
+    \centering
+    \caption{Final Model Test Performance on Electricity Consumption Data}
+    \label{tab:final_results}
+    \begin{tabular}{lcccr}
+        \toprule
+        \textbf{Model} & \textbf{MAPE (\%)} & \textbf{RMSE} & \textbf{MAE} & \textbf{Time (s)} \\
+        \midrule
+        \textbf{LightGBM} & \textbf{9.88} & 36.03 & 26.57 & 10.51 \\
+        XGBoost & 10.39 & 38.07 & 28.05 & 1.18 \\
+        SVR & 10.59 & 38.28 & 27.86 & 7.89 \\
+        NN (1-Layer) & 10.67 & 37.80 & 27.87 & 29.79 \\
+        NN (3-Layer) & 10.76 & 36.85 & 27.47 & 39.89 \\
+        Regression Tree & 10.71 & 40.46 & 28.98 & 0.54 \\
+        Linear Regression & 11.49 & 40.22 & 28.94 & 0.02 \\
+        Holt-Winters & 54.88 & 208.09 & 175.36 & 45.09 \\
+        ARIMA & 63.36 & 138.86 & 119.59 & 20.78 \\
+        \bottomrule
+    \end{tabular}
 \end{table}
 
+\subsection{Analysis of Accuracy and Efficiency}
+The results demonstrate a clear hierarchy in predictive stability. \textbf{LightGBM} achieved the lowest error (9.88\% MAPE), benefiting from its histogram-based gradient boosting which effectively handles high-frequency temporal spikes.
 
-\subsection{Discussion of Algorithmic Families}
+\textbf{Efficiency Analysis:}\\
+While LightGBM is the leader in accuracy, \textbf{XGBoost} represents the optimal balance for real-time applications, completing its training phase nearly 9x faster while maintaining a MAPE of 10.39\%. Linear Regression remains the theoretical floor for latency (0.02s), yet its high error rate (11.49\%) confirms that the relationship between time-steps is heavily non-linear.
 
-\subsubsection{Tree-Based and Boosting Methods (XGBoost/Random Forest)}
-Tree-based models were the top performers because they utilize recursive partitioning, which mirrors the "hard rules" of the car dataset. \autoref{fig:box_plot}
-
-
-
+\subsection{Quadrant Analysis}
+We mapped the computational cost against predictive error using a \textbf{Log-Log Quadrant Map} (\autoref{fig:quadrant}). 
 \begin{itemize}
-	\item \textbf{XGBoost:} As the champion, it excelled by sequentially correcting the errors of previous trees. It perfectly captured the override effects where "low" safety or "2" seats result in an "unacc" label regardless of price.
-	\item \textbf{Random Forest:} Provided a stable baseline, though it lacked the fine-tuning of XGBoost's gradient boosting approach.
+    \item \textbf{Elite Quadrant:} LightGBM and XGBoost resides here, offering both high accuracy and manageable runtime.
+    \item \textbf{Heavyweight Zone:} The Deep Neural Networks (3-Layer) show high precision but occupy the highest training latency.
+    \item \textbf{Ineffective Zone:} Classical ARIMA and Holt-Winters models, which struggled to converge on the high-resolution variance of this specific electricity dataset.
 \end{itemize}
 
-
-\subsubsection{Connectionist and Kernel Methods (ANN/SVM)}
-These models represent the data in high-dimensional space to find complex decision boundaries.
-\begin{itemize}
-	\item \textbf{ANN (MLP):} Successfully mapped the non-linear relationships between maintenance costs and safety, though at a higher computational cost (latency).
-	\item \textbf{SVM (RBF):} The RBF kernel significantly outperformed the Linear SVM, proving that car acceptability classes are not linearly separable and require a non-linear "kernel trick" to be identified.
-\end{itemize}
-
-
-\subsubsection{Distance and Probabilistic Baselines (KNN/Naive Bayes)}
-These models struggled due to their underlying assumptions:
-\begin{itemize}
-	\item \textbf{KNN (Distance-Based):} While effective after ordinal scaling, KNN is sensitive to the local density of points. It occasionally confused "good" and "acc" classes where the mathematical distance between features was minimal.
-	\item \textbf{Naive Bayes (Probabilistic):} This was the weakest family. It assumes features are independent. However, car features are \textbf{codependent} (e.g., Safety=Low always overrides Price). This "independence trap" led to its failure in capturing the dataset's logical hierarchy.
-\end{itemize}
-
-\begin{wrapfigure}{r}{0.60\textwidth}
-	\centering
-	\includegraphics[width=\linewidth]{figures/box_plot.png}
-	\caption{Box plot: Various models vs F1 Score}
-	\label{fig:myfigure}
-\end{wrapfigure}
-
-
-\subsection{Stability and Variance Analysis}
-Using the \textbf{90-fold Repeated Stratified CV}, we observed that Tree-based and Neural families showed high stability (low variance), while the Probabilistic family was highly sensitive to data splits. The plots showing confusion matrix, ROC curve for various models are attached in the \autoref{sec:app_a}.
-
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/quadrant_log_log.png}
+    \caption{Quadrant Analysis: Mapping Training Latency (s) vs. MAPE (\%). The bottom-left identifies models suitable for production deployment.}
+    \label{fig:quadrant}
+\end{figure}

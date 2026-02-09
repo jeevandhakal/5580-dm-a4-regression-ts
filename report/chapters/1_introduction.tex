@@ -1,58 +1,52 @@
-\section{Introduction and Data Exploration}
-\label{sec:1_introduction}
+\section{Mandatory Assignment Answers}
+\label{sec:mandatory_answers}
 
-\subsection{Overview}
-The classification of vehicle acceptability is a significant challenge in automotive retail data mining. This report presents a comprehensive comparative analysis of multiple classification algorithms applied to the "Car Evaluation" dataset. Following the guidelines set in MCDA-5580, our primary focus is to transition from baseline heuristic evaluations to robust, production-ready machine learning pipelines. 
-
-While this study explores a suite of algorithms including K-Nearest Neighbors (KNN), Support Vector Machines (SVM), and Artificial Neural Networks (ANN), Extreme Gradient Boosting (XGBoost), the \textbf{Random Forest Classifier (RF)} serves as a mandatory benchmark. Preliminary analysis established critical baselines using ensemble methods RF, which identified the hierarchical importance of safety and seating capacity in determining consumer sentiment. \autoref{fig:feature_importance}
-
-\begin{wrapfigure}{r}{0.4\textwidth}
-	\centering
-	\includegraphics[width=0.9\linewidth]{figures/rf_feature_imp.png}
-	\caption{Feature importance in predicting car acceptability} 
-	\label{fig:feature_importance}
-\end{wrapfigure}
-
-\subsection{Data Exploration and Preprocessing}
-The dataset comprises 1,728 instances with six categorical input features. As highlighted in the project tutorials (Tut3), these attributes represent technical and financial characteristics:
+\subsection{Supervised Learning and Business Applications}
+\textbf{Q1: Supervised Learning Definition}\\
+Supervised learning is a data analysis paradigm used to extract models that describe important data classes or forecast future trends. It relies on a labeled dataset where the algorithm learns from known pairs of inputs and outputs. 
 \begin{itemize}
-	\item \textbf{Financial Factors:} Buying Price and Maintenance Cost (categorized from 'vhigh' to 'low').
-	\item \textbf{Physical Capacity:} Number of Doors (2 to 5+) and Seating Capacity (2, 4, or more).
-	\item \textbf{Utility and Safety:} Boot Size (small, med, big) and Safety rating (low, med, high).
+    \item \textbf{Classification:} Predicts categorical class labels (e.g., "safe" or "risky").
+    \item \textbf{Prediction (Regression):} Forecasts continuous-valued functions or numeric values.
 \end{itemize}
 
-\subsection{Target Variable Distribution}
-The target variable, \textit{shouldBuy}, is divided into four classes: \textit{unacc, acc, good,} and \textit{vgood}. Analysis reveals a significant class imbalance, with approximately 70\% of records classified as "unacceptable." \ref{fig:class_distrib} This skew necessitates the use of F1-Macro as our primary evaluation metric to ensure the model does not achieve high accuracy by simply ignoring minority classes such as "very good."
+\textbf{Q2: Italian Clothing Company Case}\\
+In the business context of product demand, a clothing brand used linear regression to quantify the relationship between advertising spend and sales. The resulting model was:
+\begin{equation}
+    Sales = 168 + 23 \times (Advertising)
+\end{equation}
 
-\subsection{Random Forest Baseline Insights}
-Consistent with the findings in the baseline Random Forest report, vehicle safety and capacity (number of seats) emerged as the dominant predictors. The \autoref{tab:mutual_info_gain} further indicates the mutual information can be extracted from the labels from \textit{Scikit-learn} library, a completely different method indicated the similar results. 
+\subsection{Prediction Techniques and Time-Series Analysis}
+\textbf{Q3: Popular Prediction Techniques}\\
+\begin{itemize}
+    \item \textbf{Linear Regression:} Minimizes error in $Y = \beta_0 + \beta_1x$.
+    \item \textbf{Neural Networks:} Uses \textbf{Forward Propagation} for activations and \textbf{Back Propagation} to adjust weights based on errors.
+    \item \textbf{Support Vector Machine (SVM):} Creates a hyperplane to separate data in high-dimensional space.
+    \item \textbf{Random Forests:} An ensemble of decision trees that improves robustness by averaging multiple results.
+\end{itemize}
 
+\textbf{Q4-Q5: Time-Series Methodology}\\
+Time-series analysis focuses on predicting future values based solely on previously observed values. \textbf{Decomposition} splits data into:
+\begin{itemize}
+    \item \textbf{Seasonal:} Repeating patterns within a fixed period.
+    \item \textbf{Trend:} Long-term underlying direction.
+    \item \textbf{Noise:} Random residuals after removing trend and seasonality.
+\end{itemize}
+Techniques like \textbf{Holt-Winters} handle systematic trends and seasonality, while \textbf{ARIMA(p, d, q)} uses autoregressive terms and moving averages.
 
-\begin{table}[H]
-	\centering
-	\begin{minipage}[t]{0.3\textwidth}  % Table on left
-		\centering
-		\begin{tabular}{lS[table-format=1.6]}
-			\toprule
-			\textbf{Feature} & {\textbf{Information Gain}} \\
-			\midrule
-			safety          & 0.181732 \\
-			seats           & 0.152259 \\
-			price           & 0.066853 \\
-			maintenance     & 0.051088 \\
-			storage         & 0.020800 \\
-			doors           & 0.003109 \\
-			\bottomrule
-		\end{tabular}
-	\end{minipage}
-	\hfill
-	\begin{minipage}[t]{0.5\textwidth}  % Image on right
-		\centering
-		\includegraphics[width=\linewidth]{figures/class_distrib.png}
-		\label{fig:class_distrib}
-	\end{minipage}
-	\caption{Feature Importance via Information Gain}
-	\label{tab:mutual_info_gain}
-\end{table}
+\subsection[Performance Metrics]{Performance Metrics and Historical Benchmarks}
+\textbf{Q6: Measuring Quality with MAPE}\\
+Mean Absolute Percentage Error (MAPE) is the average of absolute percentage errors. Absolute values are used so that positive and negative errors do not cancel each other out, providing an honest accuracy metric.
 
-Thus consistently prioritizes "Safety" as the root node. If a car is rated with "low" safety, it is immediately categorized as "unacceptable" regardless of its price or maintenance cost. This logical hierarchy formed the basis for our advanced pipeline development, ensuring that our automated encoders preserved these ordinal relationships.
+\subsection[Beer Dataset]{The Australian Beer Dataset Case Study (Q7)}
+Analysis of monthly Australian beer consumption (1956--1995) demonstrates how \textbf{Time Series Decomposition} converts complex fluctuations into predictable patterns. By isolating the \textbf{Trend} (long-term growth), \textbf{Seasonal} (repeating annual peaks), and \textbf{Noise} components, demand forecasting becomes statistically grounded.
+
+Modeling benchmarks showed that \textbf{Holt-Winters} effectively captured these cycles, yielding a highly accurate \textbf{MAPE of 5.44\%}, while the \textbf{ARIMA(4, 0, 0)} model leveraged four lags for its autoregressive estimations. Ultimately, this analysis proves that brewery consumption is cyclically structured rather than random, enabling optimized 12-month inventory and production planning.
+
+\subsection[Model Experiments]{Custom Comparative Findings: Electricity Demand (Q8)}
+Our experimental results on high-frequency electricity consumption data revealed a significant performance gap between classical and modern ensemble methods. Based on our final evaluations:
+\begin{itemize}
+	\item \textbf{Deep Learning vs. Kernels:} The \textbf{NN (3-Layer)} achieved a highly competitive \textbf{10.76\% MAPE}, proving that multi-layer connections can effective map complex load surges. However, it required significant computational overhead (~39s).
+	\item \textbf{Classical Baseline:} Linear Regression, despite its speed, lagged behind with a \textbf{11.49\% MAPE}, failing to capture the non-linear intraday peaks.
+	\item \textbf{Modern Ensemble Performance:} \textbf{LightGBM} emerged as the definitive benchmark leader with a \textbf{9.88\% MAPE}. This demonstrates that for high-resolution datasets, gradient boosting on discretized histograms outperforms both classical ARIMA (which struggled with a 63.36\% error) and deep neural architectures.
+\end{itemize}
+\textbf{Conclusion:} The choice of architecture is the primary driver of accuracy. While classical models are efficient, they lack the "contextual depth" required to handle the irregular spikes inherent in real-world numeric datasets.rd kernels.

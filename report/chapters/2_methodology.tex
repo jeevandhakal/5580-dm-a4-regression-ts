@@ -1,20 +1,45 @@
-\section[Baseline Models]{Related Work and Baseline Models}
-To establish a performance baseline, this study first examined two standard classification paradigms: distance-based learning via K-Nearest Neighbors (KNN) and ensemble learning via Random Forest. These models provide a reference point for evaluating the necessity of more complex architectures and specialized preprocessing pipelines.
+\section{Experimental Methodology}
+\label{sec:methodology}
 
-\subsection{K-Nearest Neighbors (KNN) Implementation}
-The KNN algorithm was utilized to test the effectiveness of mathematical distance in determining car acceptability. An \textbf{Ordinal Encoding} was applied to the categorical features to preserve the logical (natural) order of attributes like price (vhigh > high > med > low), which \textbf{One-hot Encoding} wouldn't be able to preserve. The \autoref{tab:knn_all_metrics} demonstrates various metrics performance for $K$ in range $[1, 20]$. The \autoref{fig:m_f1} shows $f1\_scores$ of various models including KNN.
-
-
-\subsection{Random Forest and Feature Importance}
-The Random Forest classifier was implemented as the primary ensemble benchmark. This model was optimized using a randomized search for hyperparameters including tree depth and the number of estimators.
-
-
+\subsection{Feature Engineering: Cyclical Encoding and Lags}
+To capture the complex periodicities of electricity consumption, we implemented two primary feature engineering strategies:
 \begin{itemize}
-	\item \textbf{Rule Extraction:} As illustrated in the extracted decision trees (see Appendix) \autoref{fig:decision_tree_split}, the model consistently utilized "Safety" and "Seats" as the primary splitting criteria. If safety was "low" or seating capacity was "2", the model prioritized an "unacc" classification regardless of secondary variables.
-	\item \textbf{Feature Rank:} \autoref{fig:feature_importance} demonstrates that safety rating is the most significant predictor of car acceptability, followed by seating capacity and price.
+    \item \textbf{Cyclical Encoding:} Using $\sin(Hour)$ and $\cos(Hour)$ to represent the 24-hour daily cycle. This ensures that the continuity between 23:00 and 00:00 is preserved.
+    \item \textbf{Temporal Lags:} We introduced \texttt{lag\_24} (identical hour yesterday) and \texttt{lag\_168} (identical hour last week) to provide seasonal context.
 \end{itemize}
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/feature_engineering_code.png}
+    \caption{Python implementation of the feature engineering pipeline.}
+    \label{fig:feature_engineering_code}
+\end{figure}
+
+The implementation of this pipeline is detailed in \autoref{fig:feature_engineering_code}.
+
+\subsection{Preprocessing: The Case for StandardScaler}
+We utilized \textbf{StandardScaler} for all numeric inputs. 
+
+\begin{wrapfigure}{r}{0.65\textwidth}
+    \centering
+    \includegraphics[width=1.0\linewidth]{figures/consumption_violinplot.png}
+    \caption{Violin plot showing consumption distribution across hour lags.}
+    \label{fig:consumption_violin}
+\end{wrapfigure}
+
+As seen in \autoref{fig:consumption_violin}, the distribution of consumption exhibits varying scales and some outliers, but generally follows a recognizable distribution that benefits from centering. StandardScaler centers data at a mean of 0 with a unit standard deviation. This is preferred for gradient stability in Neural Networks and outlier resilience.
+
+\subsection{Chronological Data Partitioning}
+To evaluate the predictive power of our models accurately, we partitioned the dataset using a \textbf{70/15/15} ratio. 
 
 
-\subsection{Limitations of Initial Approaches}
-While the Random Forest model achieved a high accuracy of approximately $97\%$, these baseline implementations often relied on manually cleaned data and fixed partitions. In a production retail environment, data is frequently incomplete or subject to shifts. This necessitates the development of a more robust, automated pipeline capable of handling missing data and providing statistical stability through extensive cross-validation, which is the focus of the following chapter.
+This resulted in a Training set (70\%), a Validation set (15\%) for tuning, and a Hold-out Test set (15\%) to report definitive performance.
+
+
+\textbf{Rationale for Avoiding K-Fold Validation:}\\
+We explicitly avoided standard \textit{Randomized K-Fold} or \textit{Stratified K-Fold} validation for the following reasons:
+\begin{enumerate}
+	\item \textbf{Temporal Dependency:} In time-series data, each observation is statistically dependent on its predecessors. Shuffling data into random folds breaks these chronological chains, which are essential for models like ARIMA and Lag-based regressors to function correctly.
+	\item \textbf{Look-Ahead Bias (Data Leakage):} Standard K-Fold allows "future" data to appear in the training set while "past" data is in the test set. This creates a leakage of information where the model implicitly learns trends from the future to predict the past, leading to artificially inflated accuracy that would not hold in a real-world deployment.
+	\item \textbf{Integrity of Autocorrelation:} By maintaining a rigid chronological split, we ensure that the model is always tested on a continuous block of unseen future time-steps, providing a realistic assessment of its forecasting stability.
+\end{enumerate}
