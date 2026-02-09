@@ -5,6 +5,14 @@
 \subsection{Source Code and Reproducibility}
 \textbf{GitHub Repository:} \href{https://github.com/jeevandhakal/5580-dm-a4-regression-ts}{Electricity Demand Regression Repository}
 
+\subsection{Video}
+\textbf{Youtube Link:}
+\href{https://youtu.be/L-faOnwFw5c}{Youtube}
+
+
+\subsection{AI Sessions}
+\href{https://gemini.google.com/share/d0dd8aa9887a}{Gemini}
+	
 \subsection{Experimental Hardware Configuration}
 \begin{table}[H]
 	\centering
@@ -84,18 +92,61 @@
     \label{fig:optuna_slice_full}
 \end{figure}
 
-\subsection{Final Model Benchmarks and Sample Predictions}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/param_importance.png}
+    \caption{Hyperparameter importance plot identifying the most influential parameters for model precision.}
+    \label{fig:app_param_importance}
+\end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.9\linewidth]{figures/advanced_model_comparison.png}
-    \caption{Full comparison of all nine models across MAPE, MAE, and RMSE metrics.}
-    \label{fig:app_full_comparison}
+    \includegraphics[width=0.9\linewidth]{figures/tuning_results_1.png}
+    \caption{Intermediate optimization results showing early exploration of the hyperparameter search space.}
+    \label{fig:app_tuning_1}
 \end{figure}
+
+\subsection{Detailed Model Performance Benchmarks}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\linewidth]{figures/advanced_model_comparison.png}
+    \caption{Consolidated overview of model performance across key metrics (RMSE, MAPE, MAE, and Latency).}
+    \label{fig:app_full_comparison_redux}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\linewidth]{figures/model_mape_rmse.png}
+    \caption{Detailed view of RMSE and MAPE metrics, highlighting the trade-off between absolute and percentage errors.}
+    \label{fig:app_mape_rmse_detail}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{figures/model_mae.png}
+    \caption{Detailed view of Mean Absolute Error (MAE) performance.}
+    \label{fig:app_mae_detail}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{figures/model_time.png}
+    \caption{Detailed training latency comparison highlighting computational costs.}
+    \label{fig:app_time_detail}
+\end{figure}
+
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.9\linewidth]{figures/liear_regression_prediction_first_200_test.png}
     \caption{Visual calibration showing True vs. Predicted values for the Linear Regression baseline on the test set.}
     \label{fig:app_lr_pred}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\linewidth]{figures/feature_engineering_code.png}
+	\caption{Python implementation of the feature engineering pipeline.}
+	\label{fig:feature_engineering_code}
 \end{figure}

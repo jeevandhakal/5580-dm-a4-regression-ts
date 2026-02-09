@@ -2,7 +2,7 @@
 \label{sec:modeling}
 
 \subsection{Optuna-Based Bayesian Search}
-To move beyond manual heuristic selection, we employed \textbf{Optuna}, an automated hyperparameter optimization framework. We executed a study consisting of \textbf{100 trials}, utilizing a Tree-structured Parzen Estimator (TPE) to minimize the Mean Absolute Percentage Error (MAPE). 
+To move beyond manual heuristic selection, we employed \textbf{Optuna} \cite{optuna2024}, an automated hyperparameter optimization framework. We executed a study consisting of \textbf{100 trials}, utilizing a Tree-structured Parzen Estimator (TPE) to minimize the Mean Absolute Percentage Error (MAPE). 
 
 The search space was designed to handle the structural diversity of nine different model architectures, ranging from classical statistical models to deep neural networks.
 
@@ -17,12 +17,12 @@ The optimization process focused on the following key parameters:
 
 \subsection{Tuning Stability and Convergence}
 
-\begin{wrapfigure}{r}{0.55\textwidth}
+\begin{figure}[H]
     \centering
-    \includegraphics[width=1.0\linewidth]{figures/tuning_results_2.png}
+    \includegraphics[width=0.85\linewidth]{figures/tuning_results_2.png}
     \caption{Optuna objective expansion showing the convergence toward minimal MAPE across 100 trials.}
     \label{fig:optuna_convergence}
-\end{wrapfigure}
+\end{figure}
 
 As documented in our \texttt{optuna\_trials\_final.csv}, the study successfully converged on parameters that reduced MAPE significantly from the initial baseline levels. The optimization was conducted over \textbf{100 trials}, where the TPE sampler initially explored the broad hyperparameter space before exploiting the most promising regions. 
 

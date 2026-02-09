@@ -24,23 +24,44 @@ In the business context of product demand, a clothing brand used linear regressi
     \item \textbf{Random Forests:} An ensemble of decision trees that improves robustness by averaging multiple results.
 \end{itemize}
 
-\textbf{Q4-Q5: Time-Series Methodology}\\
+\textbf{Q4: Time-Series Methodology}\\
 Time-series analysis focuses on predicting future values based solely on previously observed values. \textbf{Decomposition} splits data into:
 \begin{itemize}
     \item \textbf{Seasonal:} Repeating patterns within a fixed period.
     \item \textbf{Trend:} Long-term underlying direction.
     \item \textbf{Noise:} Random residuals after removing trend and seasonality.
 \end{itemize}
-Techniques like \textbf{Holt-Winters} handle systematic trends and seasonality, while \textbf{ARIMA(p, d, q)} uses autoregressive terms and moving averages.
+
+\textbf{Q5: Popular Time-Series Prediction Techniques:}\\
+\begin{itemize}
+    \item \textbf{Holt-Winters:} Exponential smoothing for data with trend and seasonality.
+    \item \textbf{ARIMA/SARIMA:} Autoregressive integrated moving average (seasonal variant included).
+    \item \textbf{Exponential Smoothing (ETS):} General class of smoothing models.
+    \item \textbf{Prophet:} Developed by Facebook, handles seasonality, holidays, and trends.
+    \item \textbf{LSTM (Deep Learning):} Recurrent neural network for sequence prediction.
+    \item \textbf{TBATS:} Handles multiple seasonalities and complex patterns.
+    \item \textbf{Vector Autoregression (VAR):} For multivariate time series.
+\end{itemize}
 
 \subsection[Performance Metrics]{Performance Metrics and Historical Benchmarks}
-\textbf{Q6: Measuring Quality with MAPE}\\
-Mean Absolute Percentage Error (MAPE) is the average of absolute percentage errors. Absolute values are used so that positive and negative errors do not cancel each other out, providing an honest accuracy metric.
+\textbf{Q6: Time-Series Performance Metrics:}\\
+\begin{itemize}
+    \item \textbf{Mean Absolute Percentage Error (MAPE):} Percentage-based error, easy to interpret.
+    \item \textbf{Root Mean Squared Error (RMSE):} Penalizes larger errors more heavily.
+    \item \textbf{Mean Absolute Error (MAE):} Average absolute error, robust to outliers.
+    \item \textbf{Mean Absolute Scaled Error (MASE):} Scale-independent, good for comparing across series.
+    \item \textbf{Symmetric MAPE (sMAPE):} Modified version to address MAPE’s asymmetry.
+    \item \textbf{R-squared ($R^2$):} Proportion of variance explained by the model.
+\end{itemize}
 
 \subsection[Beer Dataset]{The Australian Beer Dataset Case Study (Q7)}
 Analysis of monthly Australian beer consumption (1956--1995) demonstrates how \textbf{Time Series Decomposition} converts complex fluctuations into predictable patterns. By isolating the \textbf{Trend} (long-term growth), \textbf{Seasonal} (repeating annual peaks), and \textbf{Noise} components, demand forecasting becomes statistically grounded.
 
 Modeling benchmarks showed that \textbf{Holt-Winters} effectively captured these cycles, yielding a highly accurate \textbf{MAPE of 5.44\%}, while the \textbf{ARIMA(4, 0, 0)} model leveraged four lags for its autoregressive estimations. Ultimately, this analysis proves that brewery consumption is cyclically structured rather than random, enabling optimized 12-month inventory and production planning.
+
+However, the evaluation process lacks rigor. Accuracy metrics are reported without clear definitions or context, making interpretation difficult. There is no mention of a \textbf{train-test split} or out-of-sample validation, which risks overfitting and reduces confidence in the model's real-world performance. Additionally, model selection---particularly for ARIMA parameters---appears arbitrary without support from autocorrelation plots or automated selection tools.
+
+To improve, we recommend implementing a formal validation framework using a \textbf{holdout set} and consistent error metrics such as \textbf{MAPE} or \textbf{RMSE}. Using \texttt{auto.arima()} for parameter optimization and performing residual diagnostics would strengthen model reliability. Exploring Seasonal ARIMA (\textbf{SARIMA}) could better capture the data's strong monthly patterns.
 
 \subsection[Model Experiments]{Custom Comparative Findings: Electricity Demand (Q8)}
 Our experimental results on high-frequency electricity consumption data revealed a significant performance gap between classical and modern ensemble methods. Based on our final evaluations:
@@ -49,4 +70,4 @@ Our experimental results on high-frequency electricity consumption data revealed
 	\item \textbf{Classical Baseline:} Linear Regression, despite its speed, lagged behind with a \textbf{11.49\% MAPE}, failing to capture the non-linear intraday peaks.
 	\item \textbf{Modern Ensemble Performance:} \textbf{LightGBM} emerged as the definitive benchmark leader with a \textbf{9.88\% MAPE}. This demonstrates that for high-resolution datasets, gradient boosting on discretized histograms outperforms both classical ARIMA (which struggled with a 63.36\% error) and deep neural architectures.
 \end{itemize}
-\textbf{Conclusion:} The choice of architecture is the primary driver of accuracy. While classical models are efficient, they lack the "contextual depth" required to handle the irregular spikes inherent in real-world numeric datasets.rd kernels.
+\textbf{Conclusion:} The choice of architecture is the primary driver of accuracy. While classical models are efficient, they lack the "contextual depth" required to handle the irregular spikes inherent in real-world numeric datasets.

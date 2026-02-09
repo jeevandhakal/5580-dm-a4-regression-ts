@@ -8,33 +8,27 @@ To capture the complex periodicities of electricity consumption, we implemented 
     \item \textbf{Temporal Lags:} We introduced \texttt{lag\_24} (identical hour yesterday) and \texttt{lag\_168} (identical hour last week) to provide seasonal context.
 \end{itemize}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\linewidth]{figures/feature_engineering_code.png}
-    \caption{Python implementation of the feature engineering pipeline.}
-    \label{fig:feature_engineering_code}
-\end{figure}
-
-The implementation of this pipeline is detailed in \autoref{fig:feature_engineering_code}.
+The implementation details of this feature engineering pipeline are documented in \autoref{sec:app_a} in the Appendix.
 
 \subsection{Preprocessing: The Case for StandardScaler}
 We utilized \textbf{StandardScaler} for all numeric inputs. 
 
-\begin{wrapfigure}{r}{0.65\textwidth}
-    \centering
-    \includegraphics[width=1.0\linewidth]{figures/consumption_violinplot.png}
-    \caption{Violin plot showing consumption distribution across hour lags.}
-    \label{fig:consumption_violin}
-\end{wrapfigure}
+As seen in the distribution analysis below, our target variable exhibits varying scales and some outliers, but generally follows a recognizable structure that benefits from centering. 
 
-As seen in \autoref{fig:consumption_violin}, the distribution of consumption exhibits varying scales and some outliers, but generally follows a recognizable distribution that benefits from centering. StandardScaler centers data at a mean of 0 with a unit standard deviation. This is preferred for gradient stability in Neural Networks and outlier resilience.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{figures/consumption_violinplot.png}
+    \caption{Violin plot showing consumption distribution across hour lags, justifying the use of standardized scaling.}
+    \label{fig:consumption_violin}
+\end{figure}
+
+StandardScaler centers data at a mean of 0 with a unit standard deviation. This is preferred for gradient stability in Neural Networks and outlier resilience across distance-based methods like SVR.
 
 \subsection{Chronological Data Partitioning}
 To evaluate the predictive power of our models accurately, we partitioned the dataset using a \textbf{70/15/15} ratio. 
 
 
 This resulted in a Training set (70\%), a Validation set (15\%) for tuning, and a Hold-out Test set (15\%) to report definitive performance.
-
 
 \textbf{Rationale for Avoiding K-Fold Validation:}\\
 We explicitly avoided standard \textit{Randomized K-Fold} or \textit{Stratified K-Fold} validation for the following reasons:
