@@ -4,24 +4,19 @@ import logging
 import json
 import time
 import glob
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import joblib
-import matplotlib.pyplot as plt
-import seaborn as sns
 
 import xgboost as xgb
 import lightgbm as lgb
 
 # --- IMPORT CONSTANTS & UTILS ---
 from utils import (
-    time_operation,
     verify_directories,
     ROOT_DIR,
     DATA_FILE,
-    RESULTS_DIR,
     EXTRACT_PARAMS_JSON,
     FINAL_RESULTS_CSV,
     FINAL_RESULTS_PKL,
@@ -74,14 +69,14 @@ def _configure_gpu_runtime_paths() -> dict:
 
 GPU_RUNTIME_INFO = _configure_gpu_runtime_paths()
 
-import tensorflow as tf
-from statsmodels.tsa.arima.model import ARIMA
-from statsmodels.tsa.holtwinters import ExponentialSmoothing
-from sklearn.linear_model import LinearRegression
-from sklearn.svm import SVR
-from sklearn.tree import DecisionTreeRegressor
-from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import mean_squared_error, mean_absolute_error, mean_absolute_percentage_error
+import tensorflow as tf  # noqa: E402
+from statsmodels.tsa.arima.model import ARIMA  # noqa: E402
+from statsmodels.tsa.holtwinters import ExponentialSmoothing  # noqa: E402
+from sklearn.linear_model import LinearRegression  # noqa: E402
+from sklearn.svm import SVR  # noqa: E402
+from sklearn.tree import DecisionTreeRegressor  # noqa: E402
+from sklearn.preprocessing import StandardScaler  # noqa: E402
+from sklearn.metrics import mean_squared_error, mean_absolute_error  # noqa: E402
 
 # --- SILENCE ENVIRONMENT ---
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'

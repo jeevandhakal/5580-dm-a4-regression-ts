@@ -2,6 +2,7 @@
 """Verify project setup and dependencies."""
 import sys
 import os
+import py_compile
 from pathlib import Path
 import glob
 
@@ -54,7 +55,6 @@ except ImportError as e:
 
 # 2. Test Python syntax
 print("\n2. Checking Python files...")
-import py_compile
 try:
     # Check for workflow scripts (new location)
     script_path = Path(__file__).parent.parent.parent / 'workflow' / 'scripts' / '2_final_retrain_and_evaluate.py'
@@ -85,9 +85,9 @@ else:
 # 5. Check results directory
 results_dir = Path(__file__).parent.parent.parent.parent / "results"
 if results_dir.exists():
-    print(f"   ✓ Results directory exists")
+    print("   ✓ Results directory exists")
 else:
-    print(f"   ℹ Results directory doesn't exist (will be created on run)")
+    print("   ℹ Results directory doesn't exist (will be created on run)")
 
 print("\n" + "=" * 70)
 print("✓ SETUP VERIFICATION COMPLETE")
