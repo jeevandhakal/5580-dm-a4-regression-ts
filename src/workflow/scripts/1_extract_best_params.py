@@ -2,7 +2,13 @@ import pandas as pd
 import numpy as np
 import json
 
-df = pd.read_csv('/home/bhavik/Dropbox/edu/smu/winter/data_mining/a4_regression_ts/results/optuna_trials_final.csv')
+from utils import OPTUNA_TRIALS_CSV, EXTRACT_PARAMS_JSON, verify_directories
+
+# Verify environment
+verify_directories()
+
+# Load tuning results
+df = pd.read_csv(OPTUNA_TRIALS_CSV)
 model_types = [
     'LinearRegression', 'HoltWinters', 'ARIMA', 'SVR', 
     'RegressionTree', 'XGBoost', 'LightGBM', 
@@ -26,3 +32,9 @@ for mt in model_types:
         best_params[mt] = params
 
 print(json.dumps(best_params, indent=2))
+
+# Save to file
+with open(EXTRACT_PARAMS_JSON, 'w') as f:
+    json.dump(best_params, f, indent=2)
+print(f"\n✓ Saved to: {EXTRACT_PARAMS_JSON}")
+

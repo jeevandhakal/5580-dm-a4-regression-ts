@@ -1,9 +1,9 @@
-
 import os
 import warnings
 import logging
 import json
 import time
+import glob
 from pathlib import Path
 
 import numpy as np
@@ -14,6 +14,66 @@ import seaborn as sns
 
 import xgboost as xgb
 import lightgbm as lgb
+
+# --- IMPORT CONSTANTS & UTILS ---
+from utils import (
+    time_operation,
+    verify_directories,
+    ROOT_DIR,
+    DATA_FILE,
+    RESULTS_DIR,
+    EXTRACT_PARAMS_JSON,
+    FINAL_RESULTS_CSV,
+    FINAL_RESULTS_PKL,
+)
+
+# --- GPU RUNTIME PATH SETUP (before TensorFlow import) ---
+def _append_flag(env_var: str, flag: str) -> None:
+    current = os.environ.get(env_var, "")
+    if flag not in current:
+        os.environ[env_var] = f"{current} {flag}".strip()
+
+
+def _configure_gpu_runtime_paths() -> dict:
+    venv_site = next((ROOT_DIR / ".venv" / "lib").glob("python*/site-packages"), None)
+    if not venv_site:
+        return {"nvidia_lib_dirs": [], "nvcc_bin": None, "libdevice_dir": None}
+
+    nvidia_root = venv_site / "nvidia"
+    nvidia_lib_dirs = sorted(glob.glob(str(nvidia_root / "*" / "lib")))
+
+    # 1) Shared library search path
+    existing_ld = os.environ.get("LD_LIBRARY_PATH", "")
+    ld_parts = ["/usr/lib/x86_64-linux-gnu", *nvidia_lib_dirs]
+    if existing_ld:
+        ld_parts.append(existing_ld)
+    os.environ["LD_LIBRARY_PATH"] = ":".join(ld_parts)
+
+    # 2) ptxas/nvlink path from nvidia-cuda-nvcc-cu12 wheel
+    nvcc_bin = nvidia_root / "cuda_nvcc" / "bin"
+    if nvcc_bin.exists():
+        existing_path = os.environ.get("PATH", "")
+        os.environ["PATH"] = f"{nvcc_bin}:{existing_path}"
+
+    # 3) XLA libdevice location
+    libdevice_dir = nvidia_root / "cuda_nvcc" / "nvvm" / "libdevice"
+    if libdevice_dir.exists():
+        # XLA expects the CUDA root directory, not the libdevice file path.
+        cuda_root = libdevice_dir.parent.parent  # .../nvidia/cuda_nvcc/nvvm -> .../nvidia/cuda_nvcc
+        _append_flag("XLA_FLAGS", f"--xla_gpu_cuda_data_dir={cuda_root}")
+
+    # 4) Safety fallback if ptxas toolchain still fails on a host
+    _append_flag("XLA_FLAGS", "--xla_gpu_unsafe_fallback_to_driver_on_ptxas_not_found=true")
+
+    return {
+        "nvidia_lib_dirs": nvidia_lib_dirs,
+        "nvcc_bin": str(nvcc_bin) if nvcc_bin.exists() else None,
+        "libdevice_dir": str(libdevice_dir) if libdevice_dir.exists() else None,
+    }
+
+
+GPU_RUNTIME_INFO = _configure_gpu_runtime_paths()
+
 import tensorflow as tf
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.holtwinters import ExponentialSmoothing
@@ -29,43 +89,38 @@ warnings.filterwarnings("ignore", category=UserWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 logging.getLogger('tensorflow').setLevel(logging.ERROR)
 
-# --- UTILS ---
-def time_operation(func):
-    def wrapper(*args, **kwargs):
-        start = time.perf_counter()
-        result = func(*args, **kwargs)
-        end = time.perf_counter()
-        duration_ms = (end - start) * 1000
-        return result, duration_ms
-    return wrapper
+if GPU_RUNTIME_INFO["nvcc_bin"]:
+    print(f"GPU toolchain path: {GPU_RUNTIME_INFO['nvcc_bin']}")
+if GPU_RUNTIME_INFO["libdevice_dir"]:
+    print(f"GPU libdevice path: {GPU_RUNTIME_INFO['libdevice_dir']}")
+
 
 def prepare_data(df):
+    """Create engineered features and target for model training."""
     X = df.copy()
     series = X['Target']
-    
+
     # Cyclical Features
     hour_series = X.index % 24
     X['Hour_Sin'] = np.sin(2 * np.pi * hour_series / 24)
     X['Hour_Cos'] = np.cos(2 * np.pi * hour_series / 24)
-    
+
     # Lags & Rolling Stats
     X['Lag_24'] = series.shift(24)
     X['Lag_168'] = series.shift(168)
     X['Rolling_Mean_6'] = series.shift(1).rolling(window=6).mean()
     X['Rolling_Std_24'] = series.shift(1).rolling(window=24).std()
-    
+
     X = X.dropna()
     y = X['Target']
     X = X.drop(columns=['Target'])
-    
+
     return X, y
 
-# --- 1. LOAD DATA ---
-root_path = Path('/home/bhavik/Dropbox/edu/smu/winter/data_mining/a4_regression_ts')
-data_path = root_path / "data" / "electricity_prediction.csv"
-results_path = root_path / "results"
+# --- 1. VERIFY ENVIRONMENT & LOAD DATA ---
+verify_directories()
 
-df = pd.read_csv(data_path, header=None)
+df = pd.read_csv(DATA_FILE, header=None)
 column_names = [f'Hour_{i}' for i in range(1, 7)] + ['Target']
 df.columns = column_names
 
@@ -95,7 +150,7 @@ y_train_val_scaled = scaler_y.fit_transform(y_train_val.values.reshape(-1, 1)).f
 y_test_scaled = scaler_y.transform(y_test.values.reshape(-1, 1)).flatten()
 
 # --- 4. BEST PARAMETERS ---
-with open(root_path / 'extract_params.json', 'w') as f:
+with open(EXTRACT_PARAMS_JSON, 'w') as f:
     best_params = {
       "LinearRegression": {},
       "HoltWinters": {},
@@ -198,8 +253,8 @@ for model_name, params in best_params.items():
 
 # --- 6. FINAL RESULTS ---
 df_results = pd.DataFrame(results_registry).T
-df_results.to_csv(results_path / "final_test_results.csv")
+df_results.to_csv(FINAL_RESULTS_CSV)
 print("\n--- FINAL TEST RESULTS ---")
 print(df_results)
 
-joblib.dump(df_results, results_path / "final_df_results.pkl")
+joblib.dump(df_results, FINAL_RESULTS_PKL)

@@ -46,7 +46,8 @@ A comprehensive health check suite (`gpu_health_check.py`) was run to verify sta
 | **Available VRAM** | **~7.06 GB** | Memory growth enabled |
 
 ## Verification Scripts
-You can re-verify the status at any time using the provided scripts:
+You can re-verify the status at any time using the current tools:
 
-1.  **Quick Check:** `python code/verify_gpu.py`
-2.  **Full Health Check:** `bash code/run_health_check.sh`
+1. **Sync environment first:** `uv sync`
+2. **Quick Check:** `uv run src/gpu_setup/tools/verify_setup.py`
+3. **Full Diagnosis:** `uv run src/gpu_setup/tools/diagnose_cuda.py`
